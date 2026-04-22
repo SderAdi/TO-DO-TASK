@@ -1,29 +1,96 @@
-// step - (1)  isme phle selecter create karenge
+// selectors
 let taskInput = document.getElementById("taskinput");
-let addBtn    = document.getElementById("addbtn");
-let taskList    = document.getElementById("tasklist");
+let addBtn = document.getElementById("addbtn");
+let taskList = document.getElementById("tasklist");
 
-// step - (2) function banayenge kab kya karne pe kya hoga
-addBtn.addEventListener("click", ()=> {
-            let taskText = taskInput.value;  // yaha jo input mein type karenge wo taskText wale var mein store hoga
-            if(taskText == ""){
-                alert("Bsdk Pahale Task Entre Kar");
-                return;
-            }
-            // yaha ek list create hoga jo li name ke variable mein store hoga
-            let li = document.createElement("li"); 
-            li.innerText = taskText;  //yaha kuch nhi list mein input list hoga jo ham input box mein likhenge 
-            
+// task add karne ka function
+function addTask() {
+    let taskText = taskInput.value.trim();
 
-            let delBtn = document.createElement("button");
-            delBtn.innerText = "Delete";
+    if (taskText === "") {
+        alert("Pehle task enter kar");
+        return;
+    };
 
-            delBtn.addEventListener("click", ()=>{
-                li.remove();
-            });
-            
-            li.appendChild(delBtn);
-            taskList.appendChild(li);
-            taskInput.value ="";
-            
+    // new li
+    let li = document.createElement("li");
+    li.innerText = taskText;
+
+    // complete button
+    let completeBtn = document.createElement("button");
+    completeBtn.innerText = "✓";
+
+    completeBtn.addEventListener("click", () => {
+        li.classList.toggle("completed");
+        saveTasks();
+    });
+
+    // delete button
+    let delBtn = document.createElement("button");
+    delBtn.innerText = "Delete";
+
+    delBtn.addEventListener("click", () => {
+        li.remove();
+        saveTasks();
+    });
+
+    // buttons ko li ke andar daalna
+    li.appendChild(completeBtn);
+    li.appendChild(delBtn);
+
+    // li ko ul ke andar daalna
+    taskList.appendChild(li);
+
+    // input clear
+    taskInput.value = "";
+
+    // local storage me save
+    saveTasks();
+}
+
+// add button click
+addBtn.addEventListener("click", addTask);
+
+// enter key support
+taskInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+        addTask();
+    }
 });
+
+// tasks save karne ka function
+function saveTasks() {
+    localStorage.setItem("tasks", taskList.innerHTML);
+}
+
+// purane tasks load karne ka function
+function loadTasks() {
+    let data = localStorage.getItem("tasks");
+
+    if (data) {
+        taskList.innerHTML = data;
+
+        // load ke baad buttons ko dobara event dena padega
+        let allLi = taskList.querySelectorAll("li");
+
+        allLi.forEach((li) => {
+            let buttons = li.querySelectorAll("button");
+
+            let completeBtn = buttons[0];
+            let delBtn = buttons[1];
+
+            completeBtn.addEventListener("click", () => {
+                li.classList.toggle("completed");
+                saveTasks();
+            });
+
+            delBtn.addEventListener("click", () => {
+                li.remove();
+                saveTasks();
+            });
+        });
+    }
+}
+
+// page load hote hi tasks load
+loadTasks();

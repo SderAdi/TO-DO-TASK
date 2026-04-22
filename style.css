@@ -33,6 +33,7 @@ html,body{
 
 #tasklist{
    margin: 20px 50px; 
+   
 }
 
 #tasklist li {
@@ -42,5 +43,10 @@ html,body{
     margin-top: 10px;
     width: 100%;
 
+
 }
- 
+ .completed{
+    text-decoration: line-through;
+    opacity: 0.6;
+ }
+
